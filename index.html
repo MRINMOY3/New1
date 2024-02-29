@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        canvas {
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="mycanvas"></canvas>
+    <script>
+        // Global variables
+        let canvas, pen, W, H;
+        let player, enemy, gem;
+
+        function preload() {
+            // Load images
+            enemy_image = new Image;
+            enemy_image.src = "space.png";
+
+            player_image = new Image;
+            player_image.src = "player.png";
+
+            gem_image = new Image;
+            gem_image.src = "gem.png";
+        }
+
+        function init() {
+            // Initialize game objects and canvas
+            canvas = document.getElementById("mycanvas");
+            W = 700;
+            H = 400;
+            canvas.width = W;
+            canvas.height = H;
+            pen = canvas.getContext('2d');
+
+            // Initialize player, enemy, and gem objects
+            player = {
+                x: 20,
+                y: H / 2,
+                w: 60,
+                h: 50,
+                speed: 20,
+                moving: false
+            };
+
+            // Initialize enemy objects
+            enemy = [
+                { x: 150, y: 50, w: 60, h: 60, speed: 20 },
+                { x: 450, y: 20, w: 60, h: 60, speed: 40 },
+                { x: 300, y: 150, w: 60, h: 60, speed: 30 }
+            ];
+
+            // Initialize gem object
+            gem = { x: W - 100, y: H / 2, w: 60, h: 60 };
+
+            // Event listener for touch start (tap) event
+            canvas.addEventListener('touchstart', function (event) {
+                console.log("Screen Tapped");
+                player.moving = true;
+                if (player.x == W - 100) {
+                    console.log("\nThe player Won the Match\n");
+                    document.getElementById("mycanvas").style.backgroundColor = "lightblue";
+                }
+            });
+
+            // Event listener for touch end event
+            canvas.addEventListener('touchend', function (event) {
+                console.log("Touch Ended");
+                player.moving = false;
+            });
+        }
+
+        function draw() {
+            // Clear canvas
+            pen.clearRect(0, 0, W, H);
+
+            // Draw player, enemies, and gem
+            pen.drawImage(player_image, player.x, player.y, player.w, player.h);
+            pen.drawImage(gem_image, gem.x, gem.y, gem.w, gem.h);
+            for (let i = 0; i < enemy.length; i++) {
+                pen.drawImage(enemy_image, enemy[i].x, enemy[i].y, enemy[i].w, enemy[i].h);
+            }
+        }
+
+        function update() {
+            // Update player position
+            if (player.moving) {
+                if (player.x == W - 100) {
+                    console.log("\nThe player Won the Match\n");
+                    document.getElementById("mycanvas").style.backgroundColor = "lightblue";
+                }
+                player.x += player.speed;
+            }
+
+            // Update enemy positions
+            for (let i = 0; i < enemy.length; i++) {
+                enemy[i].y += enemy[i].speed;
+                if (enemy[i].y > H - enemy[i].h || enemy[i].y < 0) {
+                    enemy[i].speed *= -1;
+                }
+            }
+        }
+
+        function gameloop() {
+            // Game loop
+            draw();
+            update();
+            console.log("The game is running");
+        }
+
+        // Start the game
+        preload();
+        init();
+        var f = setInterval(gameloop, 100);
+    </script>
+</body>
+
+</html>
